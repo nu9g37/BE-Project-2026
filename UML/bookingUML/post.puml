@@ -1,0 +1,36 @@
+@startuml Manage Booking (POST)
+actor Client
+participant Router
+participant AuthMiddleware
+participant BookingController
+participant CampgroundModel
+participant BookingModel
+database MongoDB
+
+Client -> Router : POST /campgrounds/:id/bookings
+Router -> AuthMiddleware : protect()
+AuthMiddleware --> Router : req.user
+
+Router -> BookingController : addBooking()
+
+BookingController -> CampgroundModel : findById(campgroundId)
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel : campground/null
+
+alt Campground not found
+    BookingController -> Client : 404
+else Found
+    BookingController -> BookingModel : find({user:req.user.id})
+    
+    alt user >=3 bookings AND not admin
+        BookingController -> Client : 400 Limit exceeded
+    else
+        BookingController -> BookingModel : create(req.body)
+        BookingModel -> MongoDB
+        MongoDB --> BookingModel : created booking
+        BookingModel --> BookingController
+        BookingController -> Client : 200 OK
+    end
+end
+
+@enduml

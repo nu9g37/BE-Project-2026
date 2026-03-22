@@ -1,0 +1,23 @@
+@startuml Manage Campground (GETONE)
+
+actor Client
+participant Router
+participant CampgroundController
+participant CampgroundModel
+database MongoDB
+
+Client -> Router : GET /api/v1/campgrounds/:id
+Router -> CampgroundController : getCampground(req,res)
+
+CampgroundController -> CampgroundModel : findById(id)
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel : campground/null
+CampgroundModel --> CampgroundController
+
+alt Campground found
+    CampgroundController -> Client : 200 OK + data
+else Not found
+    CampgroundController -> Client : 400 Bad Request
+end
+
+@enduml

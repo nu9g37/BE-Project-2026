@@ -1,0 +1,36 @@
+@startuml ClassDiagram
+hide methods
+skinparam classAttributeIconSize 0
+
+class User {
+  - name: String
+  - tel: String
+  - email: String
+  - role: String
+  - password: String
+  - resetPasswordToken: String
+  - resetPasswordExpire: Date
+  - createAt: Date
+}
+
+class Campground {
+  - name: String
+  - address: String
+  - district: String
+  - province: String
+  - postalcode: String
+  - tel: String
+  - region: String
+}
+
+class Booking {
+  - bookingDate: Date
+  - user: ObjectId
+  - campground: ObjectId
+  - createAt: Date
+}
+
+Campground "1" -- "N" Booking : is booked in 
+User "1" -- "N" Booking : books 
+
+@enduml

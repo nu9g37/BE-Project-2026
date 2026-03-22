@@ -1,0 +1,34 @@
+@startuml Manage Campground (DELETE)
+
+actor Client
+participant Router
+participant CampgroundController
+participant BookingModel
+participant CampgroundModel
+database MongoDB
+
+Client -> Router : DELETE /api/v1/campgrounds/:id
+Router -> CampgroundController : deleteCampground(req,res)
+
+CampgroundController -> CampgroundModel : findById(id)
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel : campground/null
+CampgroundModel --> CampgroundController
+
+alt Campground found
+    CampgroundController -> BookingModel : deleteMany({campground:id})
+    BookingModel -> MongoDB
+    MongoDB --> BookingModel
+    BookingModel --> CampgroundController
+
+    CampgroundController -> CampgroundModel : deleteOne({_id:id})
+    CampgroundModel -> MongoDB
+    MongoDB --> CampgroundModel
+    CampgroundModel --> CampgroundController
+
+    CampgroundController -> Client : 200 OK + deleted data
+else Not found
+    CampgroundController -> Client : 404 Not Found
+end
+
+@enduml

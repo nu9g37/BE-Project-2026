@@ -1,0 +1,26 @@
+@startuml Manage Booking (GETONE)
+actor Client
+participant Router
+participant AuthMiddleware
+participant BookingController
+participant BookingModel
+database MongoDB
+
+Client -> Router : GET /bookings/:id
+Router -> AuthMiddleware : protect()
+AuthMiddleware --> Router
+
+Router -> BookingController : getBooking()
+
+BookingController -> BookingModel : findById(id)
+BookingModel -> MongoDB
+MongoDB --> BookingModel : booking/null
+BookingModel --> BookingController
+
+alt Found
+    BookingController -> Client : 200 OK
+else Not found
+    BookingController -> Client : 404 Not Found
+end
+
+@enduml

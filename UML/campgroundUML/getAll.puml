@@ -1,0 +1,27 @@
+@startuml Manage Campground (GETALL)
+
+actor Client
+participant Router
+participant CampgroundController
+participant CampgroundModel
+database MongoDB
+
+Client -> Router : GET /api/v1/campgrounds
+Router -> CampgroundController : getCampgrounds(req,res)
+
+CampgroundController -> CampgroundController : Copy req.query
+CampgroundController -> CampgroundController : Remove select,sort,page,limit
+CampgroundController -> CampgroundController : Create queryStr
+CampgroundController -> CampgroundModel : find(filters)
+CampgroundModel -> MongoDB : Query documents
+MongoDB --> CampgroundModel : Campground list
+CampgroundModel --> CampgroundController : Campground list
+
+CampgroundController -> CampgroundModel : countDocuments()
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel : total
+CampgroundModel --> CampgroundController : total
+
+CampgroundController -> Client : 200 OK + pagination + data
+
+@enduml

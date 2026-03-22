@@ -1,0 +1,54 @@
+@startuml Manage Campground
+
+actor Client
+participant Router
+participant CampgroundController
+participant CampgroundModel
+participant BookingModel
+database MongoDB
+
+== GET ALL ==
+Client -> Router : GET /campgrounds
+Router -> CampgroundController
+CampgroundController -> CampgroundModel : find()
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel
+CampgroundModel --> CampgroundController
+CampgroundController --> Client : 200 OK
+
+== GET ONE ==
+Client -> Router : GET /campgrounds/:id
+Router -> CampgroundController
+CampgroundController -> CampgroundModel : findById()
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel
+CampgroundModel --> CampgroundController
+CampgroundController --> Client : 200/400
+
+== CREATE ==
+Client -> Router : POST /campgrounds
+Router -> CampgroundController
+CampgroundController -> CampgroundModel : create()
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel
+CampgroundModel --> CampgroundController
+CampgroundController --> Client : 201 Created
+
+== UPDATE ==
+Client -> Router : PUT /campgrounds/:id
+Router -> CampgroundController
+CampgroundController -> CampgroundModel : findByIdAndUpdate()
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel
+CampgroundModel --> CampgroundController
+CampgroundController --> Client : 200/400
+
+== DELETE ==
+Client -> Router : DELETE /campgrounds/:id
+Router -> CampgroundController
+CampgroundController -> CampgroundModel : findById()
+CampgroundController -> BookingModel : deleteMany()
+CampgroundController -> CampgroundModel : deleteOne()
+CampgroundController --> Client : 200/404
+
+@enduml

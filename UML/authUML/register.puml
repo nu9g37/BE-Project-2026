@@ -1,0 +1,19 @@
+@startuml Manage User (POST)
+actor Client
+participant Router
+participant AuthController
+participant UserModel
+database MongoDB
+
+Client -> Router : POST /auth/register
+Router -> AuthController : register(req,res)
+
+AuthController -> UserModel : create(name,tel,email,password,role)
+UserModel -> MongoDB : insert user
+MongoDB --> UserModel : created user
+UserModel --> AuthController : user
+
+AuthController -> AuthController : user.getSignedJwtToken()
+AuthController -> Client : 200 OK + token (cookie)
+
+@enduml

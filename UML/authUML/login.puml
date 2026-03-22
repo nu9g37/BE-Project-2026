@@ -1,0 +1,28 @@
+@startuml Manage User (POST)
+actor Client
+participant Router
+participant AuthController
+participant UserModel
+database MongoDB
+
+Client -> Router : POST /auth/login
+Router -> AuthController : login(req,res)
+
+AuthController -> UserModel : findOne(email).select(+password)
+UserModel -> MongoDB
+MongoDB --> UserModel : user/null
+UserModel --> AuthController
+
+alt User not found
+    AuthController -> Client : 400 Invalid credentials
+else User found
+    AuthController -> AuthController : matchPassword()
+    alt Password correct
+        AuthController -> AuthController : getSignedJwtToken()
+        AuthController -> Client : 200 OK + token
+    else Password incorrect
+        AuthController -> Client : 400 Invalid credentials
+    end
+end
+
+@enduml

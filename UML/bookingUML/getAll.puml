@@ -1,0 +1,27 @@
+@startuml Manage Booking (GETALL)
+actor Client
+participant Router
+participant AuthMiddleware
+participant BookingController
+participant BookingModel
+database MongoDB
+
+Client -> Router : GET /bookings
+Router -> AuthMiddleware : protect()
+AuthMiddleware --> Router : req.user
+
+Router -> BookingController : getBookings()
+
+alt user.role != admin
+    BookingController -> BookingModel : find({user:req.user.id})
+else admin
+    BookingController -> BookingModel : find()
+end
+
+BookingModel -> MongoDB
+MongoDB --> BookingModel : bookings
+BookingModel --> BookingController
+
+BookingController -> Client : 200 OK + bookings
+
+@enduml

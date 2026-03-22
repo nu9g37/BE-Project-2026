@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "User" as user
+actor "Admin" as admin
+
+rectangle "Campground Booking System" {
+  
+  ' Authentication Use Cases
+  usecase "Register" as Register
+  usecase "Login" as Login
+  usecase "Logout" as Logout
+  
+  ' User Booking Use Cases
+  usecase "Book Campground" as Book
+  usecase "View Own Bookings" as ViewOwn
+  usecase "Edit Own Bookings" as EditOwn
+  usecase "Delete Own Bookings" as DeleteOwn
+  
+  ' Admin Booking Use Cases
+  usecase "View Any Bookings" as ViewAny
+  usecase "Edit Any Bookings" as EditAny
+  usecase "Delete Any Bookings" as DeleteAny
+
+  ' User connections
+  user --> Register
+  user --> Login
+  user --> Logout
+  user --> Book
+  user --> ViewOwn
+  user --> EditOwn
+  user --> DeleteOwn
+  
+  ' Admin connections
+  Login <-- admin
+  Logout <-- admin
+  ViewAny <-- admin
+  EditAny <-- admin
+  DeleteAny <-- admin
+}
+@enduml

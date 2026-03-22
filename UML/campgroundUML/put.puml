@@ -1,0 +1,23 @@
+@startuml Manage Campground (PUT)
+
+actor Client
+participant Router
+participant CampgroundController
+participant CampgroundModel
+database MongoDB
+
+Client -> Router : PUT /api/v1/campgrounds/:id
+Router -> CampgroundController : updateCampground(req,res)
+
+CampgroundController -> CampgroundModel : findByIdAndUpdate(id,body,{new:true,runValidators:true})
+CampgroundModel -> MongoDB
+MongoDB --> CampgroundModel : updated/null
+CampgroundModel --> CampgroundController
+
+alt Campground found
+    CampgroundController -> Client : 200 OK + updated data
+else Not found
+    CampgroundController -> Client : 400 Bad Request
+end
+
+@enduml

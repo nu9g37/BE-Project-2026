@@ -1,0 +1,11 @@
+@startuml Manage User (GET)
+actor Client
+participant Router
+participant AuthController
+
+Client -> Router : GET /auth/logout
+Router -> AuthController : logout()
+
+AuthController -> Client : Clear cookie + 200 OK
+
+@enduml

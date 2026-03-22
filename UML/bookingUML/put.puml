@@ -1,0 +1,34 @@
+@startuml Manage Booking (PUT)
+actor Client
+participant Router
+participant AuthMiddleware
+participant BookingController
+participant BookingModel
+database MongoDB
+
+Client -> Router : PUT /bookings/:id
+Router -> AuthMiddleware : protect()
+AuthMiddleware --> Router : req.user
+
+Router -> BookingController : updateBooking()
+
+BookingController -> BookingModel : findById(id)
+BookingModel -> MongoDB
+MongoDB --> BookingModel : booking/null
+BookingModel --> BookingController
+
+alt Not found
+    BookingController -> Client : 404
+else Found
+    alt Not owner AND not admin
+        BookingController -> Client : 401 Unauthorized
+    else Authorized
+        BookingController -> BookingModel : findByIdAndUpdate()
+        BookingModel -> MongoDB
+        MongoDB --> BookingModel
+        BookingModel --> BookingController
+        BookingController -> Client : 200 OK
+    end
+end
+
+@enduml

@@ -1,0 +1,25 @@
+@startuml Manage Campground (POST)
+
+actor Client
+participant Router
+participant CampgroundController
+participant CampgroundModel
+database MongoDB
+
+Client -> Router : POST /api/v1/campgrounds
+Router -> CampgroundController : createCampground(req,res)
+
+CampgroundController -> CampgroundModel : create(req.body)
+CampgroundModel -> MongoDB : insert document
+
+alt Validation success
+    MongoDB --> CampgroundModel : created campground
+    CampgroundModel --> CampgroundController
+    CampgroundController -> Client : 201 Created + data
+else Validation error
+    MongoDB --> CampgroundModel : validation error
+    CampgroundModel --> CampgroundController
+    CampgroundController -> Client : 400 Bad Request
+end
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml Manage User (GET)
+actor Client
+participant Router
+participant AuthMiddleware
+participant AuthController
+participant UserModel
+database MongoDB
+
+Client -> Router : GET /auth/me
+Router -> AuthMiddleware : protect()
+AuthMiddleware --> Router : req.user
+
+Router -> AuthController : getMe(req,res)
+AuthController -> UserModel : findById(req.user.id)
+UserModel -> MongoDB
+MongoDB --> UserModel : user
+UserModel --> AuthController
+
+AuthController -> Client : 200 OK + user data
+
+@enduml
