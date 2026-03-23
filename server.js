@@ -61,6 +61,8 @@ app.use(hpp());
 // Enable CORS
 app.use(cors());
 
+const PORT = process.env.PORT || 5000;
+
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
@@ -86,8 +88,6 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use('/api/v1/campgrounds', campgrounds);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/bookings', bookings);
-
-const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, 
   console.log('Server running in ', process.env.NODE_ENV, "on " + process.env.HOST)
